@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useMemo, useEffect, useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import Services from "@/components/Services";
 import ShopSidebar from "@/components/ShopSidebar";
@@ -33,6 +33,17 @@ function ProductsContent() {
       );
     }
     return result;
+  }, [categoryFilter, searchFilter]);
+
+  useEffect(() => {
+    if (categoryFilter || searchFilter) {
+      const productsSection = document.getElementById("products");
+      if (productsSection) {
+        setTimeout(() => {
+          productsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      }
+    }
   }, [categoryFilter, searchFilter]);
 
   return (

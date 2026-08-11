@@ -5,15 +5,34 @@ import { useState } from "react";
 import { categories, companyInfo } from "@/constants/products";
 
 export default function Header() {
+
   const [showCategories, setShowCategories] = useState(false);
   const [showNavbar, setShowNavbar] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Category");
+  const [showCurrency, setShowCurrency] = useState(false);
+  const [showLanguage, setShowLanguage] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
+  const [showPages, setShowPages] = useState(false);
+  const [showMobileCategories, setShowMobileCategories] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      window.location.href = `/products?search=${encodeURIComponent(searchTerm)}`;
+      const params = new URLSearchParams();
+      params.set("search", searchTerm);
+      if (selectedCategory !== "All Category") {
+        params.set("category", selectedCategory);
+      }
+      window.location.href = `/products?${params.toString()}`;
     }
+  };
+
+  const handleCategoryClick = (category: string) => {
+    setSearchTerm("");
+    const params = new URLSearchParams();
+    params.set("category", category);
+    window.location.href = `/products?${params.toString()}`;
   };
 
   return (
@@ -36,37 +55,61 @@ export default function Header() {
           </div>
           <div className="col-lg-4 text-center text-lg-end">
             <div className="d-inline-flex align-items-center" style={{ height: "45px" }}>
-              <div className="dropdown">
-                <Link href="#" className="dropdown-toggle text-muted me-2" data-bs-toggle="dropdown">
+              <div className={`dropdown ${showCurrency ? "show" : ""}`}>
+                <Link
+                  href="#"
+                  className={`dropdown-toggle text-muted me-2 ${showCurrency ? "show" : ""}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowCurrency(!showCurrency);
+                  }}
+                  aria-expanded={showCurrency}
+                >
                   <small>INR</small>
                 </Link>
-                <div className="dropdown-menu rounded">
-                  <Link href="#" className="dropdown-item"> USD</Link>
-                  <Link href="#" className="dropdown-item"> EUR</Link>
+                <div className={`dropdown-menu rounded ${showCurrency ? "show" : ""}`}>
+                  <Link href="#" className="dropdown-item" onClick={(e) => e.preventDefault()}> USD</Link>
+                  <Link href="#" className="dropdown-item" onClick={(e) => e.preventDefault()}> EUR</Link>
                 </div>
               </div>
-              <div className="dropdown">
-                <Link href="#" className="dropdown-toggle text-muted mx-2" data-bs-toggle="dropdown">
+              <div className={`dropdown ${showLanguage ? "show" : ""}`}>
+                <Link
+                  href="#"
+                  className={`dropdown-toggle text-muted mx-2 ${showLanguage ? "show" : ""}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowLanguage(!showLanguage);
+                  }}
+                  aria-expanded={showLanguage}
+                >
                   <small>English</small>
                 </Link>
-                <div className="dropdown-menu rounded">
-                  <Link href="#" className="dropdown-item"> English</Link>
-                  <Link href="#" className="dropdown-item"> Hindi</Link>
-                  <Link href="#" className="dropdown-item"> Gujarati</Link>
+                <div className={`dropdown-menu rounded ${showLanguage ? "show" : ""}`}>
+                  <Link href="#" className="dropdown-item" onClick={(e) => e.preventDefault()}> English</Link>
+                  <Link href="#" className="dropdown-item" onClick={(e) => e.preventDefault()}> Hindi</Link>
+                  <Link href="#" className="dropdown-item" onClick={(e) => e.preventDefault()}> Gujarati</Link>
                 </div>
               </div>
-              <div className="dropdown">
-                <Link href="#" className="dropdown-toggle text-muted ms-2" data-bs-toggle="dropdown">
+              <div className={`dropdown ${showDashboard ? "show" : ""}`}>
+                <Link
+                  href="#"
+                  className={`dropdown-toggle text-muted ms-2 ${showDashboard ? "show" : ""}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowDashboard(!showDashboard);
+                  }}
+                  aria-expanded={showDashboard}
+                >
                   <small><i className="fa fa-home me-2"></i> My Dashboard</small>
                 </Link>
-                <div className="dropdown-menu rounded">
-                  <Link href="#" className="dropdown-item"> Login</Link>
-                  <Link href="#" className="dropdown-item"> Wishlist</Link>
-                  <Link href="#" className="dropdown-item"> My Card</Link>
-                  <Link href="#" className="dropdown-item"> Notifications</Link>
-                  <Link href="#" className="dropdown-item"> Account Settings</Link>
-                  <Link href="#" className="dropdown-item"> My Account</Link>
-                  <Link href="#" className="dropdown-item"> Log Out</Link>
+                <div className={`dropdown-menu rounded ${showDashboard ? "show" : ""}`}>
+                  <Link href="#" className="dropdown-item" onClick={(e) => e.preventDefault()}> Login</Link>
+                  <Link href="#" className="dropdown-item" onClick={(e) => e.preventDefault()}> Wishlist</Link>
+                  <Link href="#" className="dropdown-item" onClick={(e) => e.preventDefault()}> My Card</Link>
+                  <Link href="#" className="dropdown-item" onClick={(e) => e.preventDefault()}> Notifications</Link>
+                  <Link href="#" className="dropdown-item" onClick={(e) => e.preventDefault()}> Account Settings</Link>
+                  <Link href="#" className="dropdown-item" onClick={(e) => e.preventDefault()}> My Account</Link>
+                  <Link href="#" className="dropdown-item" onClick={(e) => e.preventDefault()}> Log Out</Link>
                 </div>
               </div>
             </div>
@@ -78,8 +121,8 @@ export default function Header() {
           <div className="col-md-4 col-lg-3 text-center text-lg-start">
             <div className="d-inline-flex align-items-center">
               <Link href="/" className="navbar-brand p-0">
-                <h1 className="display-5 text-primary m-0">
-                  <i className="fas fa-weight text-secondary me-2"></i>Superb Instruments
+                <h1 className="fs-3 text-primary m-0 fw-bold">
+                  <i className="fas fa-weight me-2"></i>Superb Instruments
                 </h1>
               </Link>
             </div>
@@ -94,15 +137,22 @@ export default function Header() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <select className="form-select text-dark border-0 border-start rounded-0 p-3" style={{ width: "200px" }}>
-                  <option value="All Category">All Category</option>
+                <select 
+                  className="form-select text-dark border-0 border-start rounded-0 p-3" 
+                  style={{ width: "200px" }}
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                   <option value="All Category">All Category</option>
                   {categories.map((cat) => (
                     <option key={cat.name} value={cat.name}>{cat.name}</option>
                   ))}
                 </select>
-                <button type="submit" className="btn btn-primary rounded-pill py-3 px-5" style={{ border: 0 }}>
-                  <i className="fas fa-search"></i>
-                </button>
+                <div className="position-absolute top-50 end-0 translate-middle-y me-5">
+                  <button type="submit" className="btn btn-primary rounded-pill py-3 px-4" style={{ border: 0 }}>
+                    <i className="fas fa-search"></i>
+                  </button>
+                </div>
               </form>
             </div>
           </div>
@@ -155,7 +205,7 @@ export default function Header() {
           <div className="col-12 col-lg-9">
             <nav className="navbar navbar-expand-lg navbar-light bg-primary">
               <Link href="/" className="navbar-brand d-block d-lg-none">
-                <h1 className="display-5 text-secondary m-0">
+                <h1 className="fs-4 text-white m-0 fw-bold">
                   <i className="fas fa-weight text-white me-2"></i>Superb Instruments
                 </h1>
               </Link>
@@ -171,19 +221,40 @@ export default function Header() {
                   <Link href="/" className="nav-item nav-link active">Home</Link>
                   <Link href="/about" className="nav-item nav-link">About</Link>
                   <Link href="/products" className="nav-item nav-link">Shop</Link>
-                  <div className="nav-item dropdown">
-                    <Link href="#" className="nav-link dropdown-toggle">Pages</Link>
-                    <div className="dropdown-menu m-0">
-                      <Link href="/bestseller" className="dropdown-item">Bestseller</Link>
-                      <Link href="/cart" className="dropdown-item">Cart Page</Link>
-                      <Link href="/checkout" className="dropdown-item">Checkout</Link>
-                      <Link href="/404" className="dropdown-item">404 Page</Link>
+                  <div className={`nav-item dropdown ${showPages ? "show" : ""}`}>
+                    <Link
+                      href="#"
+                      className={`nav-link dropdown-toggle ${showPages ? "show" : ""}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowPages(!showPages);
+                      }}
+                      aria-expanded={showPages}
+                    >
+                      Pages
+                    </Link>
+                    <div className={`dropdown-menu m-0 ${showPages ? "show" : ""}`}>
+                      <Link href="/bestseller" className="dropdown-item" onClick={() => setShowPages(false)}>Bestseller</Link>
+                      <Link href="/cart" className="dropdown-item" onClick={() => setShowPages(false)}>Cart Page</Link>
+                      <Link href="/checkout" className="dropdown-item" onClick={() => setShowPages(false)}>Checkout</Link>
+                      <Link href="/404" className="dropdown-item" onClick={() => setShowPages(false)}>404 Page</Link>
                     </div>
                   </div>
                   <Link href="/contact" className="nav-item nav-link me-2">Contact</Link>
-                  <div className="nav-item dropdown d-block d-lg-none mb-3">
-                    <Link href="#" className="nav-link dropdown-toggle">All Category</Link>
-                    <div className="dropdown-menu m-0">
+                  <div className={`nav-item dropdown d-block d-lg-none mb-3 ${showMobileCategories ? "show" : ""}`}>
+                    <Link
+                      href="#"
+                      className={`nav-link dropdown-toggle ${showMobileCategories ? "show" : ""}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowMobileCategories(!showMobileCategories);
+                      }}
+                      aria-expanded={showMobileCategories}
+                      style={{ color: "#fff" }}
+                    >
+                      All Category
+                    </Link>
+                    <div className={`dropdown-menu m-0 ${showMobileCategories ? "show" : ""}`}>
                       <ul className="list-unstyled categories-bars">
                         {categories.map((cat) => (
                           <li key={cat.name}>
