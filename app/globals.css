@@ -133,3 +133,31 @@
 body {
   -webkit-font-smoothing: antialiased;
 }
+
+/* Header search: keep the category selector and search button in the normal flow */
+.search-header-form {
+  position: relative;
+  overflow: visible;
+  min-width: 0;
+}
+
+.search-header-input {
+  min-width: 0;
+}
+
+.search-header-category {
+  flex: 0 0 200px;
+  width: 200px;
+}
+
+.search-header-button {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  margin: 0 6px 0 8px;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
